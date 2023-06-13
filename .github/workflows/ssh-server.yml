@@ -1,0 +1,20 @@
+name: SSH Server on Runner
+
+on: push
+
+jobs:
+  run-ssh-server:
+    runs-on: self-hosted
+    steps:
+    - name: Display public IP address
+      run: |
+        echo "Public IP address: $(curl -s https://api.ipify.org)"
+      
+    - name: Install OpenSSH server
+      run: sudo apt-get update && sudo apt-get install -y openssh-server
+      
+    - name: Configure SSH daemon
+      run: |
+        sudo sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
+        sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+        sudo systemctl restart sshd.service
